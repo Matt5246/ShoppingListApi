@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using asp_net_web_api.Services.SchoppingListService;
+using Microsoft.Extensions.DependencyInjection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,19 @@ builder.Services.AddScoped<IShoppingListService, ShoppingListService>();
 
 builder.Services.AddHttpContextAccessor();
 
+// Enable CORS
+// Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,9 +43,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseCors();
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
 
 app.UseAuthorization();
 
